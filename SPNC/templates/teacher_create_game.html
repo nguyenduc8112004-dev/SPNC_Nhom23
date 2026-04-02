@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Create Game</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white p-10">
+
+<h1 class="text-2xl mb-6">🎮 Tạo Game</h1>
+
+<form method="POST" action="/teacher/create_game/{{ lesson_id }}">
+
+
+<label>Chọn loại game:</label>
+<select id="gameType" name="type" class="text-black p-2 block mb-4">
+    <option value="">-- chọn --</option>
+    <option value="quiz">Trắc nghiệm</option>
+    <option value="fill">Điền từ</option>
+    <option value="match">Nối cặp</option>
+    <option value="order">Sắp xếp</option>
+
+</select>
+
+
+<input name="question" placeholder="Câu hỏi" class="text-black p-2 w-full mb-4">
+
+<div id="dynamicArea"></div>
+
+<button type="submit" class="bg-indigo-500 px-4 py-2 mt-4 rounded">
+Tạo Game
+</button>
+
+</form>
+
+<script>
+
+const area = document.getElementById("dynamicArea");
+const type = document.getElementById("gameType");
+
+type.addEventListener("change", function () {
+
+area.innerHTML = "";
+let v = this.value;
+
+
+if(v === "quiz"){
+area.innerHTML = `
+<h3>Trắc nghiệm</h3>
+
+<input name="opt1" placeholder="A" class="text-black p-2 block mb-2">
+<input name="opt2" placeholder="B" class="text-black p-2 block mb-2">
+<input name="opt3" placeholder="C" class="text-black p-2 block mb-2">
+<input name="opt4" placeholder="D" class="text-black p-2 block mb-2">
+
+<select name="correct" class="text-black p-2">
+<option value="0">A đúng</option>
+<option value="1">B đúng</option>
+<option value="2">C đúng</option>
+<option value="3">D đúng</option>
+</select>
+`;
+}
+
+
+if(v === "fill"){
+area.innerHTML = `
+<h3>Điền từ</h3>
+<input name="sentence" placeholder="Câu hỏi có ____ chỗ trống" class="text-black p-2 w-full">
+<input name="answer" placeholder="Đáp án đúng" class="text-black p-2 w-full mt-2">
+`;
+}
+
+
+if(v === "match"){
+area.innerHTML = `
+<h3>Nối cặp</h3>
+
+<div class="grid grid-cols-2 gap-4">
+    <div>
+        <input name="l1" placeholder="Trái 1" class="text-black p-2 mb-2 w-full">
+        <input name="l2" placeholder="Trái 2" class="text-black p-2 mb-2 w-full">
+        <input name="l3" placeholder="Trái 3" class="text-black p-2 mb-2 w-full">
+        <input name="l4" placeholder="Trái 4" class="text-black p-2 mb-2 w-full">
+    </div>
+
+    <div>
+        <input name="r1" placeholder="Phải 1" class="text-black p-2 mb-2 w-full">
+        <input name="r2" placeholder="Phải 2" class="text-black p-2 mb-2 w-full">
+        <input name="r3" placeholder="Phải 3" class="text-black p-2 mb-2 w-full">
+        <input name="r4" placeholder="Phải 4" class="text-black p-2 mb-2 w-full">
+    </div>
+</div>
+`;
+}
+
+
+if(v === "order"){
+area.innerHTML = `
+<h3>Sắp xếp</h3>
+<input name="line1" class="text-black p-2 w-full mb-2">
+<input name="line2" class="text-black p-2 w-full mb-2">
+<input name="line3" class="text-black p-2 w-full mb-2">
+<input name="line4" class="text-black p-2 w-full mb-2">
+`;
+}
+
+
+if(v === "boss"){
+area.innerHTML = `
+<h3>Boss fight</h3>
+<input name="answer" placeholder="Đáp án" class="text-black p-2 w-full">
+`;
+}
+
+});
+
+</script>
+
+</body>
+</html>

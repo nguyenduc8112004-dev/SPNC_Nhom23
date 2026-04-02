@@ -1,0 +1,20 @@
+<h1>⚙️ Quản lý Game</h1>
+
+<h2>{{game.type}}</h2>
+
+<p><b>Câu hỏi:</b> {{game.question}}</p>
+
+<hr>
+
+<h3>📊 Thống kê</h3>
+
+<p>✅ Đúng: {{stats.correct or 0}}</p>
+<p>❌ Sai: {{stats.wrong or 0}}</p>
+
+<hr>
+
+<form action="/teacher/delete_game/{{game.id}}" method="post">
+    <button style="background:red;color:white;padding:8px;border:none;">
+        🗑 Xoá Game
+    </button>
+</form>

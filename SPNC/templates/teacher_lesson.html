@@ -1,0 +1,102 @@
+<h1>{{ lesson.title }}</h1>
+
+<hr>
+
+<h2>📊 Thống kê học sinh</h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>Học sinh</th>
+        <th>Điểm</th>
+        <th>Hoàn thành</th>
+    </tr>
+
+    {% for s in students %}
+    <tr>
+        <td>{{ s.username }}</td>
+        <td>{{ s.score }}</td>
+        <td>{{ s.completed }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<hr>
+
+<h2>📂 Upload tài liệu bài học</h2>
+
+<form action="/teacher/upload_content" method="POST" enctype="multipart/form-data">
+
+    <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+
+    <input type="file" name="file" required>
+
+    <button type="submit">
+        ⬆ Upload
+    </button>
+
+</form>
+
+<hr>
+
+<h2>📚 Nội dung bài học</h2>
+
+{% if contents and contents|length > 0 %}
+
+    {% for c in contents %}
+
+    <div style="background:#eef2ff;padding:12px;margin:10px 0;border-radius:8px;">
+
+        
+        <a href="/static/{{ c.file_path }}" target="_blank">
+            📄 Xem tài liệu
+        </a>
+
+       
+        <form action="/teacher/delete_content/{{ c.id }}" method="POST" style="display:inline;">
+            <button type="submit"
+                onclick="return confirm('Xóa tài liệu này?')"
+                style="margin-left:10px;background:red;color:white;border:none;padding:5px 10px;border-radius:5px;">
+                ❌ Xóa
+            </button>
+        </form>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+    <p>Chưa có tài liệu</p>
+{% endif %}
+
+<hr>
+
+<h2>🎮 Danh sách Game</h2>
+
+{% for game in games %}
+
+<div style="background:#f1f5f9;padding:15px;margin:10px 0;border-radius:10px;">
+
+    <p><b>Câu hỏi:</b> {{ game.question }}</p>
+    <p><b>Loại:</b> {{ game.type }}</p>
+
+    <div style="margin-top:10px;">
+
+        <a href="/teacher/game_stats/{{ game.id }}" class="bg-blue-500 px-3 py-1 rounded">
+            <button style="background:#3b8;color:white;padding:6px 12px;border:none;border-radius:6px;">
+            📊 Thống kê
+            </button>
+        </a>
+
+        <form action="/teacher/delete_game/{{ game.id }}" method="POST" style="display:inline;">
+            <button type="submit"
+                onclick="return confirm('Xoá game này?')"
+                style="background:#ef4444;color:white;padding:6px 12px;border:none;border-radius:6px;">
+                🗑 Xoá
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+{% endfor %}

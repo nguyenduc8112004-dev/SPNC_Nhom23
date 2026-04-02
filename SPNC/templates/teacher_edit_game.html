@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-white p-10">
+
+<h1 class="text-2xl mb-6">✏️ Chỉnh sửa Game</h1>
+
+<form method="POST">
+
+
+<label>Câu hỏi</label>
+<input name="question"
+value="{{game.question}}"
+class="w-full p-2 text-black mb-4">
+
+
+{% if game.type == "quiz" %}
+
+{% set data = game.data %}
+
+<input name="opt1" value="{{data.options[0]}}" class="text-black p-2 w-full mb-2">
+<input name="opt2" value="{{data.options[1]}}" class="text-black p-2 w-full mb-2">
+<input name="opt3" value="{{data.options[2]}}" class="text-black p-2 w-full mb-2">
+<input name="opt4" value="{{data.options[3]}}" class="text-black p-2 w-full mb-2">
+
+<label>Đáp án đúng</label>
+<select name="correct" class="text-black p-2 mb-4">
+<option value="0" {% if data.correct==0 %}selected{% endif %}>Option 1</option>
+<option value="1" {% if data.correct==1 %}selected{% endif %}>Option 2</option>
+<option value="2" {% if data.correct==2 %}selected{% endif %}>Option 3</option>
+<option value="3" {% if data.correct==3 %}selected{% endif %}>Option 4</option>
+</select>
+
+{% endif %}
+
+
+{% if game.type == "fill" %}
+<input name="answer" value="{{game.data.answer}}" class="text-black p-2 w-full mb-4">
+{% endif %}
+
+
+{% if game.type == "match" %}
+{% for i in range(game.data.left|length) %}
+<input name="left[]" value="{{game.data.left[i]}}" class="text-black p-2 w-full mb-2">
+<input name="right[]" value="{{game.data.right[i]}}" class="text-black p-2 w-full mb-2">
+{% endfor %}
+{% endif %}
+
+
+{% if game.type == "order" %}
+{% for line in game.data.lines %}
+<input name="lines[]" value="{{line}}" class="text-black p-2 w-full mb-2">
+{% endfor %}
+{% endif %}
+
+
+{% if game.type == "boss" %}
+<input name="answer" value="{{game.data.answer}}" class="text-black p-2 w-full mb-4">
+{% endif %}
+
+<button class="bg-indigo-500 px-6 py-2 rounded">
+💾 Lưu thay đổi
+</button>
+
+</form>
+
+</body>
+</html>

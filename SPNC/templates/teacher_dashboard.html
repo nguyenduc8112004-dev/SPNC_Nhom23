@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-slate-900 text-white">
+
+<div class="flex">
+
+
+
+<div class="w-64 bg-slate-800 h-screen p-5">
+
+<h1 class="text-xl mb-6">Teacher Panel</h1>
+
+<ul class="space-y-3">
+
+<li><a href="/teacher" class="block hover:text-indigo-400">Dashboard</a></li>
+
+<li><a href="/teacher/courses" class="block hover:text-indigo-400">Courses</a></li>
+
+<li><a href="/teacher/lessons" class="block hover:text-indigo-400">Lessons</a></li>
+
+<li><a href="/teacher/games" class="block hover:text-indigo-400">Games</a></li>
+
+<li><a href="/teacher/students" class="block hover:text-indigo-400">Students</a></li>
+
+<li><a href="/teacher/reports" class="block hover:text-indigo-400">Reports</a></li>
+
+<li><a href="/logout" class="block text-red-400">Logout</a></li>
+
+</ul>
+
+</div>
+
+<!-- MAIN CONTENT -->
+
+<div class="flex-1 p-10">
+
+<h1 class="text-3xl mb-6">
+Teacher Dashboard
+</h1>
+
+<div class="grid grid-cols-3 gap-6">
+
+<div class="bg-slate-800 p-6 rounded">
+<h2 class="text-lg">Students</h2>
+<p class="text-3xl">25</p>
+</div>
+
+<div class="bg-slate-800 p-6 rounded">
+<h2 class="text-lg">Courses</h2>
+<p class="text-3xl">3</p>
+</div>
+
+<div class="bg-slate-800 p-6 rounded">
+<h2 class="text-lg">Lessons</h2>
+<p class="text-3xl">12</p>
+</div>
+
+</div>
+
+<!-- STUDENT PROGRESS -->
+
+<h2>Tiến độ học sinh</h2>
+
+{% for s in students %}
+
+<div style="margin-bottom:20px">
+
+<p>{{s.username}} | Level {{s.level}} | {{s.xp}} XP</p>
+
+<div style="width:400px;background:#ddd;border-radius:10px;">
+
+<div style="
+width: {{s.progress}}%;
+background:#22c55e;
+height:20px;
+border-radius:10px;">
+</div>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</body>
+</html>

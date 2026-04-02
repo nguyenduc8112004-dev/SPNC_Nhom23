@@ -1,0 +1,17 @@
+.logout{
+float:right;
+background:#ef4444;
+padding:8px 14px;
+border-radius:6px;
+color:white;
+text-decoration:none;
+font-size:14px;
+}
+
+.logout:hover{
+background:#dc2626;
+}
+
+.game-form{
+    display:none;
+}

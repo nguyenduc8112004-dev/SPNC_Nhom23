@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>{{ lesson.title }}</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body { background:#0f172a; color:white; }
+
+.order-item{
+padding:10px;
+margin:5px;
+background:#334155;
+cursor:grab;
+border-radius:8px;
+}
+
+.match-container{
+display:flex;
+justify-content:space-between;
+gap:50px;
+position:relative;
+}
+
+.left-item,.right-item{
+padding:10px;
+margin:6px;
+background:#334155;
+cursor:pointer;
+border-radius:6px;
+}
+
+svg{
+position:absolute;
+top:0;left:0;
+width:100%;height:100%;
+pointer-events:none;
+}
+</style>
+</head>
+
+<body class="p-8">
+
+
+<h1 class="text-3xl mb-6 text-center">{{ lesson.title }}</h1>
+
+
+{% if lesson.material %}
+<div class="bg-slate-700 p-4 mb-6 rounded">
+
+<h2 class="text-xl mb-3">📚 Tài liệu bài học</h2>
+
+{% if lesson.material.endswith('.pdf') %}
+    <a href="/static/uploads/{{lesson.material}}" target="_blank">
+        📄 Mở PDF
+    </a>
+
+{% elif lesson.material.endswith('.mp4') %}
+    <video controls width="100%">
+        <source src="/static/uploads/{{lesson.material}}">
+    </video>
+
+{% else %}
+    <img src="/static/uploads/{{lesson.material}}" style="max-width:100%">
+{% endif %}
+
+</div>
+{% endif %}
+
+
+{% if contents %}
+<div class="bg-slate-800 p-4 mb-6 rounded">
+
+<h2 class="text-xl mb-3">📚 Tài liệu bổ sung</h2>
+
+{% for c in contents %}
+    <div class="mb-3 p-3 bg-slate-700 rounded">
+
+        {% if c.content_type == 'video' %}
+            <video controls width="100%">
+                <source src="/static/{{ c.file_path }}">
+            </video>
+
+        {% elif c.content_type == 'pdf' %}
+            <a href="/static/{{ c.file_path }}" target="_blank">📄 Mở PDF</a>
+
+        {% elif c.content_type == 'image' %}
+            <img src="/static/{{ c.file_path }}" style="max-width:100%">
+
+        {% else %}
+            <a href="/static/{{ c.file_path }}" target="_blank">📎 Xem file</a>
+        {% endif %}
+
+    </div>
+{% endfor %}
+
+</div>
+{% endif %}
+
+
+
+{% for g in games %}
+<div class="bg-slate-800 p-6 rounded mb-6 max-w-3xl mx-auto">
+
+<p class="mb-4 text-lg">{{ g.question }}</p>
+
+<div id="result-{{g.id}}" class="mb-3 text-sm"></div>
+
+
+{% if g.type == "quiz" %}
+{% for opt in g.data.options %}
+<label class="block">
+<input type="radio" name="q{{g.id}}" value="{{loop.index0}}">
+{{opt}}
+</label>
+{% endfor %}
+
+<button onclick="checkQuiz('{{g.id}}')" class="bg-indigo-500 px-3 py-1 mt-3 rounded">
+Submit
+</button>
+{% endif %}
+
+
+{% if g.type == "fill" %}
+<input id="fill{{g.id}}" class="text-black p-2 w-full mt-2">
+<button onclick="checkFill('{{g.id}}')" class="bg-green-500 px-3 py-1 mt-2 rounded">Check</button>
+{% endif %}
+
+
+{% if g.type == "boss" %}
+<input id="boss{{g.id}}" class="text-black p-2 w-full mt-2">
+<button onclick="checkBoss('{{g.id}}')" class="bg-red-500 px-3 py-1 mt-2 rounded">Fight</button>
+{% endif %}
+
+
+{% if g.type == "order" %}
+<div id="order-{{g.id}}">
+{% for line in g.data.lines %}
+<div class="order-item">{{line}}</div>
+{% endfor %}
+</div>
+
+<button onclick="checkOrder('{{g.id}}')" class="bg-yellow-500 px-3 py-1 mt-3 rounded">
+Submit
+</button>
+{% endif %}
+
+
+{% if g.type == "match" %}
+<div class="match-container" id="match-{{g.id}}">
+<svg></svg>
+
+<div>
+{% for p in g.data.pairs %}
+<div class="left-item" data-id="{{loop.index0}}">{{p.left}}</div>
+{% endfor %}
+</div>
+
+<div>
+{% for p in g.data.pairs %}
+<div class="right-item" data-id="{{loop.index0}}">{{p.right}}</div>
+{% endfor %}
+</div>
+
+</div>
+
+<button onclick="checkMatch('{{g.id}}')" class="bg-purple-500 px-3 py-1 mt-3 rounded">
+Submit
+</button>
+{% endif %}
+
+</div>
+{% endfor %}
+
+
+<script>
+
+
+function checkQuiz(id){
+const selected = document.querySelector(`input[name="q${id}"]:checked`);
+const box = document.getElementById(`result-${id}`);
+
+if(!selected){
+box.innerHTML="⚠️ Chọn đáp án";
+return;
+}
+
+fetch("/check_game",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+game_id:Number(id),
+answer:Number(selected.value)
+})
+})
+.then(r=>r.json())
+.then(data=>{
+box.innerHTML = data.correct
+? "✅ Đúng + "+data.xp+" XP"
+: "❌ Sai";
+});
+}
+
+
+function checkFill(id){
+fetch("/check_game",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+game_id:Number(id),
+answer:document.getElementById("fill"+id).value
+})
+})
+.then(r=>r.json())
+.then(data=>{
+document.getElementById(`result-${id}`).innerHTML =
+data.correct ? "✅ Đúng" : "❌ Sai";
+});
+}
+
+
+function checkBoss(id){
+fetch("/check_game",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+game_id:Number(id),
+answer:document.getElementById("boss"+id).value
+})
+})
+.then(r=>r.json())
+.then(data=>{
+document.getElementById(`result-${id}`).innerHTML =
+data.correct ? "🔥 Đúng + "+data.xp : "💀 Sai";
+});
+}
+
+
+let dragged;
+
+document.querySelectorAll(".order-item").forEach(item=>{
+item.draggable = true;
+item.ondragstart = e => dragged = item;
+item.ondragover = e => e.preventDefault();
+item.ondrop = function(){
+this.parentNode.insertBefore(dragged, this);
+};
+});
+
+function checkOrder(id){
+const arr=[...document.querySelectorAll(`#order-${id} .order-item`)]
+.map(i=>i.innerText.trim());
+
+fetch("/check_game",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+game_id:Number(id),
+answer:JSON.stringify(arr)
+})
+})
+.then(r=>r.json())
+.then(data=>{
+document.getElementById(`result-${id}`).innerHTML =
+data.correct ? "✅ Đúng + "+data.xp : "❌ Sai";
+});
+}
+
+
+let matchState = {};
+
+document.addEventListener("click", e=>{
+if(e.target.classList.contains("left-item")){
+matchState.selected = e.target;
+return;
+}
+
+if(e.target.classList.contains("right-item") && matchState.selected){
+
+let left = matchState.selected;
+let container = left.closest(".match-container");
+let svg = container.querySelector("svg");
+
+let l = left.dataset.id;
+let r = e.target.dataset.id;
+
+if(!matchState[container.id])
+matchState[container.id] = {};
+
+matchState[container.id][l] = r;
+
+svg.innerHTML = "";
+
+Object.entries(matchState[container.id]).forEach(([li,ri])=>{
+
+let L = container.querySelector(`.left-item[data-id="${li}"]`);
+let R = container.querySelector(`.right-item[data-id="${ri}"]`);
+
+if(!L || !R) return;
+
+let r1 = L.getBoundingClientRect();
+let r2 = R.getBoundingClientRect();
+let c = container.getBoundingClientRect();
+
+let line = document.createElementNS("http://www.w3.org/2000/svg","line");
+
+line.setAttribute("x1", r1.right - c.left);
+line.setAttribute("y1", r1.top - c.top + r1.height/2);
+line.setAttribute("x2", r2.left - c.left);
+line.setAttribute("y2", r2.top - c.top + r2.height/2);
+line.setAttribute("stroke", "white");
+
+svg.appendChild(line);
+});
+
+matchState.selected = null;
+}
+});
+
+function checkMatch(id){
+const ans = matchState["match-"+id] || {};
+
+fetch("/check_game",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+game_id:Number(id),
+answer:JSON.stringify(ans)
+})
+})
+.then(r=>r.json())
+.then(data=>{
+document.getElementById(`result-${id}`).innerHTML =
+data.correct ? "✅ Đúng + "+data.xp : "❌ Sai";
+});
+}
+
+</script>
+
+</body>
+</html>
