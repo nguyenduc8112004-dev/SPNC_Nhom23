@@ -6,7 +6,6 @@ app = Flask(__name__)
 app.secret_key = "secret"
 
 
-# KẾT NỐI SQL SERVER
 conn = pyodbc.connect(
     "DRIVER={SQL Server};"
     "SERVER= DESKTOP-NI7S795;"
@@ -44,7 +43,6 @@ def login():
             session["user"] = user.username
             session["role"] = user.role
 
-            # phân quyền
             if user.role == "teacher":
                 return redirect("/teacher")
 
@@ -65,20 +63,17 @@ def dashboard():
 
     username = session["user"]
 
-    # lấy thông tin user
     cursor.execute(
         "SELECT * FROM users WHERE username=?",
         (username,)
     )
     user = cursor.fetchone()
 
-    # lấy danh sách khóa học
     cursor.execute("""
     SELECT * FROM courses
     """)
     courses = cursor.fetchall()
 
-    # lấy bài tập về nhà
     cursor.execute("""
     SELECT homework.*, lessons.title AS lesson_title
     FROM homework
@@ -87,7 +82,6 @@ def dashboard():
     """)
     homeworks = cursor.fetchall()
 
-    # tính progress xp
     xp = user.xp
     level_xp = user.level * 100
     progress = int((xp / level_xp) * 100)
@@ -165,7 +159,6 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
-        # kiểm tra username tồn tại
         cursor.execute(
             "SELECT * FROM users WHERE username=?",
             (username,)
@@ -177,7 +170,6 @@ def register():
             flash("Tên tài khoản đã tồn tại", "error")
             return redirect("/register")
 
-        # thêm user
         cursor.execute(
             "INSERT INTO users (username,password) VALUES (?,?)",
             (username,password)
