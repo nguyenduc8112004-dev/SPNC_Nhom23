@@ -1,0 +1,338 @@
+USE [master]
+GO
+/****** Object:  Database [gamified_lms]    Script Date: 03/04/2026 5:11:34 CH ******/
+CREATE DATABASE [gamified_lms]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'gamified_lms', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\gamified_lms.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'gamified_lms_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\gamified_lms_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [gamified_lms] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [gamified_lms].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [gamified_lms] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [gamified_lms] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [gamified_lms] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [gamified_lms] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [gamified_lms] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [gamified_lms] SET AUTO_CLOSE ON 
+GO
+ALTER DATABASE [gamified_lms] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [gamified_lms] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [gamified_lms] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [gamified_lms] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [gamified_lms] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [gamified_lms] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [gamified_lms] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [gamified_lms] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [gamified_lms] SET  ENABLE_BROKER 
+GO
+ALTER DATABASE [gamified_lms] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [gamified_lms] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [gamified_lms] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [gamified_lms] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [gamified_lms] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [gamified_lms] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [gamified_lms] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [gamified_lms] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [gamified_lms] SET  MULTI_USER 
+GO
+ALTER DATABASE [gamified_lms] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [gamified_lms] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [gamified_lms] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [gamified_lms] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [gamified_lms] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [gamified_lms] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [gamified_lms] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [gamified_lms] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [gamified_lms]
+GO
+/****** Object:  Table [dbo].[attempts]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[attempts](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NULL,
+	[game_id] [int] NULL,
+	[score] [int] NULL,
+	[completed] [bit] NULL,
+	[created_at] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[badges]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[badges](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](100) NULL,
+	[description] [nvarchar](max) NULL,
+	[icon] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[contents]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[contents](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[lesson_id] [int] NULL,
+	[file_path] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[courses]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[courses](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[title] [nvarchar](255) NULL,
+	[description] [nvarchar](max) NULL,
+	[teacher_id] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[game_results]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[game_results](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NULL,
+	[game_id] [int] NULL,
+	[is_correct] [bit] NULL,
+	[created_at] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[games]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[games](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[lesson_id] [int] NULL,
+	[type] [nvarchar](50) NULL,
+	[question] [nvarchar](max) NULL,
+	[data_json] [nvarchar](max) NULL,
+	[xp_reward] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[homework]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[homework](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[lesson_id] [int] NULL,
+	[title] [nvarchar](200) NULL,
+	[description] [nvarchar](max) NULL,
+	[due_date] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[lesson_contents]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[lesson_contents](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[lesson_id] [int] NULL,
+	[content_type] [nvarchar](50) NULL,
+	[file_path] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[lessons]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[lessons](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[topic_id] [int] NULL,
+	[title] [nvarchar](200) NULL,
+	[content] [nvarchar](max) NULL,
+	[lesson_order] [int] NULL,
+	[xp_reward] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[progress]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[progress](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NULL,
+	[lesson_id] [int] NULL,
+	[score] [int] NULL,
+	[completion] [int] NULL,
+	[completed] [bit] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[topics]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[topics](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[course_id] [int] NULL,
+	[title] [nvarchar](200) NULL,
+	[topic_order] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[user_badges]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[user_badges](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[user_id] [int] NULL,
+	[badge_id] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[users]    Script Date: 03/04/2026 5:11:34 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[users](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[username] [nvarchar](50) NULL,
+	[password] [nvarchar](255) NULL,
+	[role] [nvarchar](20) NULL,
+	[xp] [int] NULL,
+	[level] [int] NULL,
+	[created_at] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[username] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[attempts] ADD  DEFAULT (getdate()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[game_results] ADD  DEFAULT (getdate()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[games] ADD  DEFAULT ((10)) FOR [xp_reward]
+GO
+ALTER TABLE [dbo].[lessons] ADD  DEFAULT ((10)) FOR [xp_reward]
+GO
+ALTER TABLE [dbo].[progress] ADD  DEFAULT ((0)) FOR [completed]
+GO
+ALTER TABLE [dbo].[users] ADD  DEFAULT ('student') FOR [role]
+GO
+ALTER TABLE [dbo].[users] ADD  DEFAULT ((0)) FOR [xp]
+GO
+ALTER TABLE [dbo].[users] ADD  DEFAULT ((1)) FOR [level]
+GO
+ALTER TABLE [dbo].[users] ADD  DEFAULT (getdate()) FOR [created_at]
+GO
+ALTER TABLE [dbo].[lesson_contents]  WITH CHECK ADD FOREIGN KEY([lesson_id])
+REFERENCES [dbo].[lessons] ([id])
+GO
+ALTER TABLE [dbo].[lessons]  WITH CHECK ADD FOREIGN KEY([topic_id])
+REFERENCES [dbo].[topics] ([id])
+GO
+ALTER TABLE [dbo].[topics]  WITH CHECK ADD FOREIGN KEY([course_id])
+REFERENCES [dbo].[courses] ([id])
+GO
+USE [master]
+GO
+ALTER DATABASE [gamified_lms] SET  READ_WRITE 
+GO
